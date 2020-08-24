@@ -1,10 +1,13 @@
 import 'dart:async';
 
-import 'package:notes/data/blocs/bloc_provider.dart';
-import 'package:notes/data/database.dart';
-import 'package:notes/models/note_model.dart';
+import 'package:Notes/data/blocs/bloc_provider.dart';
+import 'package:Notes/data/database.dart';
+import 'package:Notes/models/note_model.dart';
 
 class ViewNoteBloc implements BlocBase {
+
+  final _addNoteController = StreamController<Note>.broadcast();
+  StreamSink<Note> get inAddNote => _addNoteController.sink;
 
   final _saveNoteController = StreamController<Note>.broadcast();
   StreamSink<Note> get inSaveNote => _saveNoteController.sink;
@@ -17,6 +20,7 @@ class ViewNoteBloc implements BlocBase {
   Stream<bool> get deleted => _noteDeletedController.stream;
 
   ViewNoteBloc() {
+    _addNoteController.stream.listen(_handleAddNote);
     _saveNoteController.stream.listen(_handleSaveNote);
     _deleteNoteController.stream.listen(_handleDeleteNote);
   }
@@ -26,6 +30,7 @@ class ViewNoteBloc implements BlocBase {
     _saveNoteController.close();
     _deleteNoteController.close();
     _noteDeletedController.close();
+    _addNoteController.close();
   }
 
   void _handleSaveNote(Note note) async {
@@ -36,6 +41,10 @@ class ViewNoteBloc implements BlocBase {
     await DBProvider.db.deleteNote(id);
 
     _inDeleted.add(true);
+  }
+
+  void _handleAddNote(Note note) async {
+    await DBProvider.db.newNote(note);
   }
 
 }

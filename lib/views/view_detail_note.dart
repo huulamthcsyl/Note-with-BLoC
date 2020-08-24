@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:notes/data/blocs/bloc_provider.dart';
-import 'package:notes/data/blocs/view_note_bloc.dart';
-import 'package:notes/models/note_model.dart';
+import 'package:Notes/data/blocs/bloc_provider.dart';
+import 'package:Notes/data/blocs/view_note_bloc.dart';
+import 'package:Notes/models/note_model.dart';
 
 class ViewNotePage extends StatefulWidget {
 
@@ -16,19 +16,26 @@ class ViewNotePage extends StatefulWidget {
 class _ViewNotePageState extends State<ViewNotePage> {
 
   ViewNoteBloc _viewNoteBloc;
-  TextEditingController _noteController = new TextEditingController();
+  TextEditingController _titleController = new TextEditingController();
+  TextEditingController _contentsController = new TextEditingController();
 
   @override
   void initState() {
     _viewNoteBloc = BlocProvider.of<ViewNoteBloc>(context);
-    _noteController.text = widget.note.contents;
+    _titleController.text = widget.note.title;
+    _contentsController.text = widget.note.contents;
+
     super.initState();
   }
 
   void _saveNote() async {
-    widget.note.contents = _noteController.text;
+    widget.note.title = _titleController.text;
+    widget.note.contents = _contentsController.text;
 
-    _viewNoteBloc.inSaveNote.add(widget.note);
+    if(widget.note.id != null) _viewNoteBloc.inSaveNote.add(widget.note);
+    else _viewNoteBloc.inAddNote.add(widget.note);
+
+    Navigator.of(context).pop(true);
   }
 
   void _deleteNote() async {
@@ -45,7 +52,6 @@ class _ViewNotePageState extends State<ViewNotePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Note' + widget.note.id.toString()),
         actions: [
           IconButton(
             icon: Icon(Icons.save), 
@@ -57,10 +63,31 @@ class _ViewNotePageState extends State<ViewNotePage> {
           ),
         ],
       ),
-      body: Container(
-        child: TextField(
-          controller: _noteController,
-          maxLines: null,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children:[ 
+              TextField(
+                controller: _titleController,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: 'Title'
+                ),
+                maxLines: null,
+              ),
+              SizedBox(height: 8,),
+              Divider(),
+              TextField(
+                controller: _contentsController,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: 'Contents'
+                ),
+                maxLines: null,
+              ),
+            ]
+          ),
         ),
       ),
     );

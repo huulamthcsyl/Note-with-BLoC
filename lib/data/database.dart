@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:notes/models/note_model.dart';
+import 'package:Notes/models/note_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -26,6 +26,7 @@ class DBProvider{
       await db.execute('''
                 CREATE TABLE Notes(
                   id INTEGER PRIMARY KEY,
+                  title TEXT DEFAULT '',
                   contents TEXT DEFAULT ''
                 )''');
     },);

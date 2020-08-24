@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:notes/data/blocs/bloc_provider.dart';
-import 'package:notes/data/database.dart';
-import 'package:notes/models/note_model.dart';
+import 'package:Notes/data/blocs/bloc_provider.dart';
+import 'package:Notes/data/database.dart';
+import 'package:Notes/models/note_model.dart';
 
 class NotesBloc implements BlocBase {
 
@@ -15,31 +15,22 @@ class NotesBloc implements BlocBase {
   Stream<List<Note>> get notes => _notesController.stream;
 
   // Input stream for add new note
-  final _addNoteController = StreamController<Note>.broadcast();
-  StreamSink<Note> get inAddNote => _addNoteController.sink;
+  // final _addNoteController = StreamController<Note>.broadcast();
+  // StreamSink<Note> get inAddNote => _addNoteController.sink;
 
   NotesBloc() {
     getNotes();
-
-    _addNoteController.stream.listen(_handleAddNote);
   }
 
   @override
   void dispose() {
     _notesController.close();
-    _addNoteController.close();
   }
 
   void getNotes() async {
     List<Note> notes = await DBProvider.db.getNotes();
 
     _inNotes.add(notes);
-  }
-
-  void _handleAddNote(Note note) async {
-    await DBProvider.db.newNote(note);
-
-    getNotes();
   }
 
 }

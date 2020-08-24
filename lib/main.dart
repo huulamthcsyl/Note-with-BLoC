@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:notes/data/blocs/bloc_provider.dart';
-import 'package:notes/data/blocs/notes_bloc.dart';
-import 'package:notes/views/view_notes.dart';
+import 'package:Notes/data/blocs/bloc_provider.dart';
+import 'package:Notes/data/blocs/notes_bloc.dart';
+import 'package:Notes/views/view_notes.dart';
 
 void main() => runApp(MyApp());
 

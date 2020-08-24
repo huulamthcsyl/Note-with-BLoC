@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:notes/data/blocs/bloc_provider.dart';
-import 'package:notes/data/blocs/notes_bloc.dart';
-import 'package:notes/data/blocs/view_note_bloc.dart';
-import 'package:notes/models/note_model.dart';
-import 'package:notes/views/view_detail_note.dart';
+import 'package:Notes/data/blocs/bloc_provider.dart';
+import 'package:Notes/data/blocs/notes_bloc.dart';
+import 'package:Notes/data/blocs/view_note_bloc.dart';
+import 'package:Notes/models/note_model.dart';
+import 'package:Notes/views/view_detail_note.dart';
 
 class NotesPage extends StatefulWidget {
 
@@ -26,9 +26,9 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   void _addNote() async {
-    Note note = new Note(contents: '');
+    Note note = new Note(title: '', contents: '');
 
-    _notesBloc.inAddNote.add(note);
+    _navigateToNote(note);
   }
 
   void _navigateToNote(Note note) async {
@@ -53,42 +53,55 @@ class _NotesPageState extends State<NotesPage> {
         title: Text(widget.title),
       ),
       body: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: StreamBuilder<List<Note>>(
-                stream: _notesBloc.notes,
-                builder: (context, snapshot) {
-                  if(snapshot.hasData){
-                    List<Note> notes = snapshot.data;
-                    
-                    return ListView.builder(
-                      itemCount: notes.length,
-                      itemBuilder: (context, index) {
-                        Note note = notes[index];
+        child: StreamBuilder<List<Note>>(
+          stream: _notesBloc.notes,
+          builder: (context, snapshot) {
+            if(snapshot.hasData){
+              List<Note> notes = snapshot.data;
+                      
+              return ListView.builder(
+                itemCount: notes.length,
+                itemBuilder: (context, index) {
+                  Note note = notes[index];
 
-                        return GestureDetector(
-                          onTap: () => _navigateToNote(note),
-                          child: Container(
-                            height: 40,
-                            child: Text(
-                              'Note' + note.id.toString(),
+                  return GestureDetector(
+                    onTap: () => _navigateToNote(note),
+                    child: Container(
+                      margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              note.title,
                               style: TextStyle(
-                                fontSize: 18
+                                fontSize: 24,
+                                fontWeight: FontWeight.w500
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  }
-                  return Center(child: CircularProgressIndicator());
+                            Text(
+                              note.contents,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black54
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
                 },
-              )
-            )
-          ],
-        ),
+              );
+            }
+            return Center(child: CircularProgressIndicator());
+          },
+        )
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addNote,
